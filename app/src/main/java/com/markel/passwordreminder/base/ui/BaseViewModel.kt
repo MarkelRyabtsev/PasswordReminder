@@ -3,7 +3,6 @@ package com.markel.passwordreminder.base.ui
 import androidx.lifecycle.ViewModel
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.di.CoroutineProvider
-import com.markel.passwordreminder.ui.page_fragment.note.NoteDisplay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -38,10 +37,4 @@ abstract class BaseViewModel(
         super.onCleared()
         coroutineJob.cancel()
     }
-
-    fun mapNotes(
-        it: NoteEntity
-    ) = NoteDisplay(
-        it
-    )
 }

@@ -5,17 +5,17 @@ import com.markel.passwordreminder.base.ui.BaseViewModel
 import com.markel.passwordreminder.base.vo.Resource
 import com.markel.passwordreminder.data.RequestResult
 import com.markel.passwordreminder.data.repository.NoteRepository
+import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.setError
 import com.markel.passwordreminder.ext.setLoading
 import com.markel.passwordreminder.ext.setSuccess
-import com.markel.passwordreminder.ui.page_fragment.note.NoteDisplay
 
 class PageViewModel(
     private val noteRepository: NoteRepository
 ) : BaseViewModel() {
 
     val isDataLoaded: MutableLiveData<Resource<Boolean>> = MutableLiveData()
-    private var noteList: List<NoteDisplay> = listOf()
+    private var noteList: List<NoteEntity> = listOf()
 
     init {
         loadNotes()
@@ -28,7 +28,7 @@ class PageViewModel(
     private fun getByGroup(groupId: Int) =
         when (groupId) {
             1 -> noteList
-            else -> noteList.filter { it.wrapped.groupId == groupId }
+            else -> noteList.filter { it.groupId == groupId }
         }
 
     private fun loadNotes() {
@@ -36,7 +36,7 @@ class PageViewModel(
         makeRequest({ noteRepository.getAllNotes() }) {
             when (it) {
                 is RequestResult.Success -> {
-                    noteList = it.result.map { mapNotes(it) }
+                    noteList = it.result
                     isDataLoaded.setSuccess(true)
                 }
                 is RequestResult.Error -> {

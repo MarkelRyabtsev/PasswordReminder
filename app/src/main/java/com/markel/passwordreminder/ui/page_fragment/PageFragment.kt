@@ -49,7 +49,7 @@ class PageFragment : Fragment(R.layout.fragment_page),
     }
 
     private fun initAdapter() {
-        noteAdapter = NoteAdapter()
+        noteAdapter = NoteAdapter(this.requireContext())
         rvNotes.adapter = noteAdapter
     }
 
@@ -97,7 +97,7 @@ class PageFragment : Fragment(R.layout.fragment_page),
     }
 
     private fun getData() {
-        noteAdapter.items = viewModel.getNotes(getGroupId())
+        noteAdapter.setList(viewModel.getNotes(getGroupId()))
     }
 
     private fun getGroupId() = arguments?.getInt(GROUP_ID) ?: 1

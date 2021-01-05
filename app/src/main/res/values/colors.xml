@@ -11,4 +11,7 @@
     <color name="colorAccent">#9DACB9</color>
     <color name="color_snackbar_cancel">#EA6666</color>
     <color name="color_snackbar_background">#2D3038</color>
+    <color name="list_item_bg_collapsed">#E2FAFF</color>
+    <color name="list_item_bg_expanded">#CAC4C4</color>
+    <color name="list_item_fg">#aa7CDDE7</color>
 </resources>
