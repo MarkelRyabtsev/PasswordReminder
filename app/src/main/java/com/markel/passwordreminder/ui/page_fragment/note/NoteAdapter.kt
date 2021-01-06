@@ -27,7 +27,7 @@ class NoteAdapter(context: Context) : RecyclerView.Adapter<NoteAdapter.ViewHolde
     private val expandedBg: Int by bindColor(context, R.color.list_item_bg_expanded)
 
     private val listItemHorizontalPadding: Float by bindDimen(context, R.dimen.list_item_horizontal_padding)
-    private val listItemVerticalPadding: Float by bindDimen(context, R.dimen.list_item_vertical_padding)
+    private val listItemVerticalPadding: Float by bindDimen(context, R.dimen.list_item_horizontal_padding)
     private val originalWidth = context.screenWidth - 24.dp
     private val expandedWidth = context.screenWidth - 8.dp
     private var originalHeight = -1 // will be calculated dynamically
