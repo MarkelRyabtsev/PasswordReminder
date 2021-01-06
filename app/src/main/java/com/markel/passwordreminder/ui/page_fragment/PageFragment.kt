@@ -9,7 +9,10 @@ import com.markel.passwordreminder.base.vo.Status
 import com.markel.passwordreminder.ext.hideGroupViews
 import com.markel.passwordreminder.ext.observe
 import com.markel.passwordreminder.ext.show
+import com.markel.passwordreminder.ext.toast
 import com.markel.passwordreminder.ui.page_fragment.note.NoteAdapter
+import com.markel.passwordreminder.ui.page_fragment.note.NoteItemClick
+import com.markel.passwordreminder.ui.page_fragment.note.OperationType
 import kotlinx.android.synthetic.main.fragment_page.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -40,8 +43,6 @@ class PageFragment : Fragment(R.layout.fragment_page),
         initListeners()
         initAdapter()
         observeData()
-
-        viewModel.getNotes(getGroupId())
     }
 
     private fun initListeners() {
@@ -49,7 +50,7 @@ class PageFragment : Fragment(R.layout.fragment_page),
     }
 
     private fun initAdapter() {
-        noteAdapter = NoteAdapter(this.requireContext())
+        noteAdapter = NoteAdapter(this.requireContext()) { onItemClick(it)}
         rvNotes.adapter = noteAdapter
     }
 
@@ -59,7 +60,7 @@ class PageFragment : Fragment(R.layout.fragment_page),
                 Status.LOADING -> displayProgress()
                 Status.SUCCESS -> {
                     it.data?.let { isLoaded ->
-                        if (isLoaded) getData()
+                        if (isLoaded) setData()
                         else displayTextByEmptyList()
                     }
                     displayNormal()
@@ -86,6 +87,18 @@ class PageFragment : Fragment(R.layout.fragment_page),
         swipeRefreshLayout.isRefreshing = false
     }
 
+    private fun onItemClick(clickedItem: NoteItemClick) {
+        when (clickedItem.operationType) {
+            OperationType.EDIT -> context?.toast("Edit ${clickedItem.noteId}")
+            OperationType.SHARE -> context?.toast("Share ${clickedItem.noteId}")
+            OperationType.DELETE -> deleteItem(clickedItem.noteId, clickedItem.noteIndex)
+        }
+    }
+
+    private fun deleteItem(id: Int, index: Int) {
+        viewModel.deleteNote(id)
+    }
+
     private fun displayTextByEmptyList() {
         tvError.show()
     }
@@ -96,7 +109,7 @@ class PageFragment : Fragment(R.layout.fragment_page),
         swipeRefreshLayout.isRefreshing = false
     }
 
-    private fun getData() {
+    private fun setData() {
         noteAdapter.setList(viewModel.getNotes(getGroupId()))
     }
 

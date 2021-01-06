@@ -25,6 +25,17 @@ class PageViewModel(
 
     fun updateNotes() = loadNotes()
 
+    fun deleteNote(id: Int) {
+        makeRequest({ noteRepository.deleteNote(
+            noteList.firstOrNull {it.id == id})}
+        ) {
+            when (it) {
+                is RequestResult.Success -> { loadNotes() }
+                is RequestResult.Error -> {}
+            }
+        }
+    }
+
     private fun getByGroup(groupId: Int) =
         when (groupId) {
             1 -> noteList

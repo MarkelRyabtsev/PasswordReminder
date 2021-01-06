@@ -89,26 +89,26 @@
 
                     <ImageView
                         android:id="@+id/iv_card_edit"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginEnd="30dp"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="40dp"
                         app:srcCompat="@drawable/ic_card_edit"
-                        app:tint="#4CAF50" />
+                        app:tint="@color/colorAccent" />
 
                     <ImageView
                         android:id="@+id/iv_card_share"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginEnd="30dp"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="40dp"
                         app:srcCompat="@drawable/ic_card_share"
-                        app:tint="#00BCD4" />
+                        app:tint="@color/colorAccent" />
 
                     <ImageView
                         android:id="@+id/iv_card_delete"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
                         app:srcCompat="@drawable/ic_card_delete"
-                        app:tint="@color/color_snackbar_cancel" />
+                        app:tint="#BA5858" />
 
                 </LinearLayout>
 

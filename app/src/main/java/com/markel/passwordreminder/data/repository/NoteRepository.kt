@@ -24,4 +24,8 @@ class NoteRepository(
     suspend fun getNotesByGroup(groupId: Int) = apiCall {
         noteDao.getByGroup(groupId)
     }
+
+    suspend fun deleteNote(note: NoteEntity?) = apiCall {
+        noteDao.deleteNote(note)
+    }
 }

@@ -12,28 +12,39 @@ import androidx.core.animation.doOnStart
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.base.constants.Constant
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.*
+import com.markel.passwordreminder.util.NotesDiffUtil
 import com.markel.passwordreminder.util.bindColor
 import com.markel.passwordreminder.util.bindDimen
 import com.markel.passwordreminder.util.bindView
 
-class NoteAdapter(context: Context) : RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
+class NoteAdapter(
+    context: Context,
+    private val clickListener: (NoteItemClick) -> Unit
+) : RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
     private val originalBg: Int by bindColor(context, R.color.list_item_bg_collapsed)
     private val expandedBg: Int by bindColor(context, R.color.list_item_bg_expanded)
 
-    private val listItemHorizontalPadding: Float by bindDimen(context, R.dimen.list_item_horizontal_padding)
-    private val listItemVerticalPadding: Float by bindDimen(context, R.dimen.list_item_horizontal_padding)
+    private val listItemHorizontalPadding: Float by bindDimen(
+        context,
+        R.dimen.list_item_horizontal_padding
+    )
+    private val listItemVerticalPadding: Float by bindDimen(
+        context,
+        R.dimen.list_item_horizontal_padding
+    )
     private val originalWidth = context.screenWidth - 24.dp
     private val expandedWidth = context.screenWidth - 8.dp
     private var originalHeight = -1 // will be calculated dynamically
     private var expandedHeight = -1 // will be calculated dynamically
 
-    private var adapterList: List<NoteEntity> = listOf()
+    private var adapterList = ArrayList<NoteEntity>()
 
     private val listItemExpandDuration: Long get() = 300L
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -47,7 +58,11 @@ class NoteAdapter(context: Context) : RecyclerView.Adapter<NoteAdapter.ViewHolde
     ///////////////////////////////////////////////////////////////////////////
 
     fun setList(list: List<NoteEntity>) {
-        adapterList = list
+        DiffUtil.calculateDiff(
+            NotesDiffUtil(adapterList, list)
+        ).dispatchUpdatesTo(this)
+        adapterList.clear()
+        adapterList.addAll(list)
     }
 
     override fun getItemCount(): Int = adapterList.size
@@ -74,7 +89,7 @@ class NoteAdapter(context: Context) : RecyclerView.Adapter<NoteAdapter.ViewHolde
 
         if (model.isProtected) {
             holder.passwordToggle.show()
-            holder.passwordToggle.setOnClickListener {
+            holder.passwordToggle.setSafeOnClickListener {
                 if (!model.passwordHided) {
                     holder.passwordToggle.loadImage(R.drawable.ic_card_eye_opened)
                     holder.notePassword.text = Constant.HIDED_PASSWORD_DOTS
@@ -86,6 +101,34 @@ class NoteAdapter(context: Context) : RecyclerView.Adapter<NoteAdapter.ViewHolde
                 }
             }
         } else holder.passwordToggle.hide()
+
+        holder.editButton.setSafeOnClickListener {
+            clickListener(
+                NoteItemClick(
+                    model.id,
+                    position,
+                    OperationType.EDIT
+                )
+            )
+        }
+        holder.shareButton.setSafeOnClickListener {
+            clickListener(
+                NoteItemClick(
+                    model.id,
+                    position,
+                    OperationType.SHARE
+                )
+            )
+        }
+        holder.deleteButton.setSafeOnClickListener {
+            clickListener(
+                NoteItemClick(
+                    model.id,
+                    position,
+                    OperationType.DELETE
+                )
+            )
+        }
 
         expandItem(holder, model == expandedModel, animate = false)
         scaleDownItem(holder, position, isScaledDown)
@@ -178,8 +221,10 @@ class NoteAdapter(context: Context) : RecyclerView.Adapter<NoteAdapter.ViewHolde
     private fun setScaleDownProgress(holder: ViewHolder, position: Int, progress: Float) {
         val itemExpanded = position >= 0 && adapterList[position] == expandedModel
         holder.cardContainer.layoutParams.apply {
-            width = ((if (itemExpanded) expandedWidth else originalWidth) * (1 - 0.1f * progress)).toInt()
-            height = ((if (itemExpanded) expandedHeight else originalHeight) * (1 - 0.1f * progress)).toInt()
+            width =
+                ((if (itemExpanded) expandedWidth else originalWidth) * (1 - 0.1f * progress)).toInt()
+            height =
+                ((if (itemExpanded) expandedHeight else originalHeight) * (1 - 0.1f * progress)).toInt()
         }
         holder.cardContainer.requestLayout()
 
@@ -201,10 +246,14 @@ class NoteAdapter(context: Context) : RecyclerView.Adapter<NoteAdapter.ViewHolde
         setScaleDownProgress(holder, position, if (isScaleDown) 1f else 0f)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val noteDescription: TextView by bindView(R.id.note_description)
         val notePassword: TextView by bindView(R.id.note_password)
         val passwordToggle: ImageView by bindView(R.id.passwordToggle)
+
+        val editButton: ImageView by bindView(R.id.iv_card_edit)
+        val shareButton: ImageView by bindView(R.id.iv_card_share)
+        val deleteButton: ImageView by bindView(R.id.iv_card_delete)
 
         val expandView: View by bindView(R.id.cl_more)
         val chevron: View by bindView(R.id.iv_card_arrow)
