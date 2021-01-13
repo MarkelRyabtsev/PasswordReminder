@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.base.vo.Status
+import com.markel.passwordreminder.custom.CustomSnackbar
 import com.markel.passwordreminder.ext.hideGroupViews
 import com.markel.passwordreminder.ext.observe
 import com.markel.passwordreminder.ext.show
@@ -50,7 +52,7 @@ class PageFragment : Fragment(R.layout.fragment_page),
     }
 
     private fun initAdapter() {
-        noteAdapter = NoteAdapter(this.requireContext()) { onItemClick(it)}
+        noteAdapter = NoteAdapter(this.requireContext()) { onItemClick(it) }
         rvNotes.adapter = noteAdapter
     }
 
@@ -89,14 +91,27 @@ class PageFragment : Fragment(R.layout.fragment_page),
 
     private fun onItemClick(clickedItem: NoteItemClick) {
         when (clickedItem.operationType) {
-            OperationType.EDIT -> context?.toast("Edit ${clickedItem.noteId}")
-            OperationType.SHARE -> context?.toast("Share ${clickedItem.noteId}")
-            OperationType.DELETE -> deleteItem(clickedItem.noteId, clickedItem.noteIndex)
+            OperationType.EDIT -> context?.toast("Edit ${clickedItem.note.id}")
+            OperationType.SHARE -> context?.toast("Share ${clickedItem.note.id}")
+            OperationType.DELETE -> deleteItem(
+                clickedItem.note.id,
+                clickedItem.noteIndex,
+                clickedItem.note.description
+            )
         }
     }
 
-    private fun deleteItem(id: Int, index: Int) {
-        viewModel.deleteNote(id)
+    private fun deleteItem(id: Int, index: Int, description: String) {
+        CustomSnackbar.make(
+            constraintLayout,
+            description,
+            2500,
+            View.OnClickListener {
+                this.context?.toast("undo")
+            }
+        ) {
+            viewModel.deleteNote(id)
+        }?.show()
     }
 
     private fun displayTextByEmptyList() {

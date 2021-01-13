@@ -3,7 +3,6 @@ package com.markel.passwordreminder.ext
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.MutableLiveData
 import com.markel.passwordreminder.base.vo.Resource

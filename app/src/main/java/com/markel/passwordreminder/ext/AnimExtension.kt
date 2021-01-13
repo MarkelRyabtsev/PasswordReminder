@@ -1,5 +1,6 @@
 package com.markel.passwordreminder.ext
 
+import android.animation.ObjectAnimator
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
@@ -9,6 +10,9 @@ import android.graphics.Point
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.LinearInterpolator
+import android.widget.ProgressBar
+import androidx.core.animation.doOnEnd
 
 inline fun getValueAnimator(
     forward: Boolean = true,
@@ -32,6 +36,21 @@ fun blendColors(color1: Int, color2: Int, ratio: Float): Int {
     val g = (Color.green(color1) * inverseRatio) + (Color.green(color2) * ratio)
     val b = (Color.blue(color1) * inverseRatio) + (Color.blue(color2) * ratio)
     return Color.argb(a.toInt(), r.toInt(), g.toInt(), b.toInt())
+}
+
+fun ProgressBar.setProgressAnimation(animDuration: Long, finished: () -> Unit) {
+    ObjectAnimator.ofInt(
+        this,
+        "progress",
+        100,
+        0
+    ).apply {
+        duration = animDuration
+        interpolator = LinearInterpolator()
+        doOnEnd {
+            finished.invoke()
+        }
+    }.start()
 }
 
 inline val Context.screenWidth: Int

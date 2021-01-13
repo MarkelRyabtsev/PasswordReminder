@@ -105,7 +105,7 @@ class NoteAdapter(
         holder.editButton.setSafeOnClickListener {
             clickListener(
                 NoteItemClick(
-                    model.id,
+                    model,
                     position,
                     OperationType.EDIT
                 )
@@ -114,7 +114,7 @@ class NoteAdapter(
         holder.shareButton.setSafeOnClickListener {
             clickListener(
                 NoteItemClick(
-                    model.id,
+                    model,
                     position,
                     OperationType.SHARE
                 )
@@ -123,7 +123,7 @@ class NoteAdapter(
         holder.deleteButton.setSafeOnClickListener {
             clickListener(
                 NoteItemClick(
-                    model.id,
+                    model,
                     position,
                     OperationType.DELETE
                 )

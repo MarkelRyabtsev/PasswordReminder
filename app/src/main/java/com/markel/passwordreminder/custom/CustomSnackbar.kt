@@ -1,12 +1,13 @@
 package com.markel.passwordreminder.custom
 
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.markel.passwordreminder.R
+import com.markel.passwordreminder.ext.*
 import com.markel.passwordreminder.ext.findSuitableParent
-import com.markel.passwordreminder.ext.loadColor
 
 class CustomSnackbar(
     parent: ViewGroup,
@@ -20,7 +21,13 @@ class CustomSnackbar(
 
     companion object {
 
-        fun make(view: View): CustomSnackbar {
+        fun make(
+            view: View,
+            noteDescription: String,
+            duration: Int,
+            listener: View.OnClickListener?,
+            timerIsDone: () -> Unit
+        ): CustomSnackbar? {
 
             // First we find a suitable parent for our custom view
             val parent = view.findSuitableParent() ?: throw IllegalArgumentException(
@@ -28,18 +35,36 @@ class CustomSnackbar(
             )
 
             // We inflate our custom view
-            val customView = LayoutInflater.from(view.context).inflate(
-                R.layout.layout_custom_snackbar,
-                parent,
-                false
-            ) as CustomSnackbarView
+            try {
+                val customView = LayoutInflater.from(view.context).inflate(
+                    R.layout.layout_custom_snackbar,
+                    parent,
+                    false
+                ) as CustomSnackbarView
+                // We create and return our Snackbar
+                customView.apply {
+                    tvNoteDescription.text = noteDescription
+                    tvActionUndo.setSafeOnClickListener {
+                        listener?.onClick(customView.tvActionUndo)
+                    }
+                    progressBar.apply {
+                        max = 100
+                        progress = 100
+                        setProgressAnimation(duration.toLong()) {
+                            timerIsDone.invoke()
+                        }
+                    }
+                }
 
-            // We create and return our Snackbar
-            return CustomSnackbar(
-                parent,
-                customView
-            )
+                return CustomSnackbar(
+                    parent,
+                    customView
+                ).setDuration(duration)
+            } catch (e: Exception) {
+
+            }
+
+            return null
         }
-
     }
 }
