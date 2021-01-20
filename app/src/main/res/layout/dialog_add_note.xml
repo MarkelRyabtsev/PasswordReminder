@@ -2,44 +2,123 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_16dp"
+    android:background="@color/white"
+    android:minWidth="300dp">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_label"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/black"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Creating"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="@dimen/margin_16dp"
+        android:hint="Description"
+        android:importantForAutofill="no"
+        android:maxLength="30"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        android:inputType="textCapSentences"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_label"
+        tools:ignore="TextFields" />
+
+    <TextView
+        android:id="@+id/tvMaxSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Creating"
-        android:textColor="@color/black"
-        android:textSize="34sp"
-        android:layout_marginTop="32dp"
-        android:paddingTop="@dimen/margin_16dp"
-        android:layout_marginStart="@dimen/margin_16dp"
-        android:layout_marginBottom="@dimen/margin_16dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/et_description"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/et_description"
+        app:layout_constraintTop_toBottomOf="@+id/et_description"
+        tools:text="17/30" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/et_description"
-        android:hint="Description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/et_password"/>
-
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/et_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16dp"
+        android:layout_marginEnd="@dimen/margin_16dp"
         android:hint="Password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/button_create"/>
+        android:importantForAutofill="no"
+        android:maxLength="30"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        android:inputType="textCapSentences"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvMaxSize"
+        tools:ignore="TextFields" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_create"
-        android:layout_width="match_parent"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_hide_password"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_marginEnd="@dimen/margin_16dp"
+        android:text="Hide password?"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_password"/>
+
+    <ProgressBar
+        android:id="@+id/pbModifyPopular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch_hide_password"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/button_cancel"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginEnd="@dimen/margin_16dp"
+        android:background="@null"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="2sp"
+        android:text="@string/action_cancel"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toStartOf="@+id/button_confirm"
+        app:layout_constraintTop_toTopOf="@+id/button_confirm"
+        tools:visibility="visible"
+        tools:ignore="RtlCompat" />
+
+    <Button
+        android:id="@+id/button_confirm"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="@dimen/margin_16dp"
+        android:background="@null"
+        android:text="@string/action_create"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch_hide_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

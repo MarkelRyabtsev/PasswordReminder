@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.snackbar.Snackbar
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.base.vo.Status
 import com.markel.passwordreminder.custom.CustomSnackbar
+import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.hideGroupViews
 import com.markel.passwordreminder.ext.observe
 import com.markel.passwordreminder.ext.show
 import com.markel.passwordreminder.ext.toast
+import com.markel.passwordreminder.ui.bottom_dialog.AddNoteDialog
+import com.markel.passwordreminder.ui.main.MainActivity
 import com.markel.passwordreminder.ui.page_fragment.note.NoteAdapter
 import com.markel.passwordreminder.ui.page_fragment.note.NoteItemClick
 import com.markel.passwordreminder.ui.page_fragment.note.OperationType
@@ -52,7 +54,7 @@ class PageFragment : Fragment(R.layout.fragment_page),
     }
 
     private fun initAdapter() {
-        noteAdapter = NoteAdapter(this.requireContext()) { onItemClick(it) }
+        noteAdapter = NoteAdapter(this.requireContext(), ::onItemClick, ::onItemActionClick)
         rvNotes.adapter = noteAdapter
     }
 
@@ -89,9 +91,13 @@ class PageFragment : Fragment(R.layout.fragment_page),
         swipeRefreshLayout.isRefreshing = false
     }
 
-    private fun onItemClick(clickedItem: NoteItemClick) {
+    private fun onItemClick(clickedItem: NoteEntity?) {
+        viewModel.editableNote = clickedItem
+    }
+
+    private fun onItemActionClick(clickedItem: NoteItemClick) {
         when (clickedItem.operationType) {
-            OperationType.EDIT -> context?.toast("Edit ${clickedItem.note.id}")
+            OperationType.EDIT -> showEditDialog(clickedItem.note)
             OperationType.SHARE -> context?.toast("Share ${clickedItem.note.id}")
             OperationType.DELETE -> deleteItem(
                 clickedItem.note.id,
@@ -99,6 +105,13 @@ class PageFragment : Fragment(R.layout.fragment_page),
                 clickedItem.note.description
             )
         }
+    }
+
+    private fun showEditDialog(note: NoteEntity) {
+        (requireActivity() as? MainActivity)?.editNoteDialog?.show(
+            requireActivity().supportFragmentManager,
+            AddNoteDialog.TAG
+        )
     }
 
     private fun deleteItem(id: Int, index: Int, description: String) {

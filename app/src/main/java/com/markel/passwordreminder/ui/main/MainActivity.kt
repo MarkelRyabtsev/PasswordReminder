@@ -8,11 +8,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.base.vo.Status
 import com.markel.passwordreminder.database.entity.GroupEntity
+import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.*
 import com.markel.passwordreminder.routers.MainRouter
 import com.markel.passwordreminder.ui.bottom_dialog.AddNoteDialog
@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val router by inject<MainRouter>()
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
     private lateinit var addNoteDialog: AddNoteDialog
+    lateinit var editNoteDialog: AddNoteDialog
 
     companion object {
         fun getStartIntent(context: Context) = Intent(context, MainActivity::class.java)
@@ -38,9 +39,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setupToolbar()
         initAdapter()
+        initDialog()
         initListeners()
         observeGroups()
-        setupDialog()
     }
 
     private fun setupToolbar() {
@@ -68,11 +69,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }.attach()
     }
 
+    private fun initDialog() {
+        addNoteDialog = AddNoteDialog.newInstance(false)
+        addNoteDialog.setEventListener(object : AddNoteDialog.EventListener {
+            override fun onClick(newNote: NoteEntity) {
+                viewModel.addNote(newNote)
+            }
+        })
+        editNoteDialog = AddNoteDialog.newInstance(true)
+        editNoteDialog.setEventListener(object : AddNoteDialog.EventListener {
+            override fun onClick(editedNote: NoteEntity) {
+                viewModel.editNote(editedNote)
+            }
+        })
+    }
+
     private fun initListeners() {
         nav_view.setNavigationItemSelectedListener(this)
-        fab.setOnClickListener { view ->
-            addNoteDialog.show()
-        }
+        fab.setOnClickListener { showAddDialog() }
     }
 
     private fun observeGroups() {
@@ -91,14 +105,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun setupDialog() {
-        addNoteDialog = AddNoteDialog(this)
-    }
-
     private fun setGroups(groupList: List<GroupEntity>) {
         sectionsPagerAdapter.setGroups(groupList)
         if (groupList.size > 1)
             tabs.show()
+    }
+
+    private fun showAddDialog() {
+        addNoteDialog.show(this.supportFragmentManager, AddNoteDialog.TAG)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

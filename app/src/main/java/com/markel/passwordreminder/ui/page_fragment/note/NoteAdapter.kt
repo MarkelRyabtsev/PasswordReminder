@@ -25,7 +25,8 @@ import com.markel.passwordreminder.util.bindView
 
 class NoteAdapter(
     context: Context,
-    private val clickListener: (NoteItemClick) -> Unit
+    private val itemClickListener: (NoteEntity?) -> Unit,
+    private val actionClickListener: (NoteItemClick) -> Unit
 ) : RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
     private val originalBg: Int by bindColor(context, R.color.list_item_bg_collapsed)
@@ -103,7 +104,7 @@ class NoteAdapter(
         } else holder.passwordToggle.hide()
 
         holder.editButton.setSafeOnClickListener {
-            clickListener(
+            actionClickListener(
                 NoteItemClick(
                     model,
                     position,
@@ -112,7 +113,7 @@ class NoteAdapter(
             )
         }
         holder.shareButton.setSafeOnClickListener {
-            clickListener(
+            actionClickListener(
                 NoteItemClick(
                     model,
                     position,
@@ -121,7 +122,7 @@ class NoteAdapter(
             )
         }
         holder.deleteButton.setSafeOnClickListener {
-            clickListener(
+            actionClickListener(
                 NoteItemClick(
                     model,
                     position,
@@ -134,27 +135,31 @@ class NoteAdapter(
         scaleDownItem(holder, position, isScaledDown)
 
         holder.cardContainer.setOnClickListener {
-            if (expandedModel == null) {
+            when (expandedModel) {
+                null -> {
+                    // expand clicked view
+                    itemClickListener.invoke(model)
+                    expandItem(holder, expand = true, animate = true)
+                    expandedModel = model
+                }
+                model -> {
+                    // collapse clicked view
+                    itemClickListener.invoke(null)
+                    expandItem(holder, expand = false, animate = true)
+                    expandedModel = null
+                }
+                else -> {
+                    // collapse previously expanded view
+                    itemClickListener.invoke(model)
+                    val expandedModelPosition = adapterList.indexOf(expandedModel!!)
+                    val oldViewHolder =
+                        recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ViewHolder
+                    if (oldViewHolder != null) expandItem(oldViewHolder, expand = false, animate = true)
 
-                // expand clicked view
-                expandItem(holder, expand = true, animate = true)
-                expandedModel = model
-            } else if (expandedModel == model) {
-
-                // collapse clicked view
-                expandItem(holder, expand = false, animate = true)
-                expandedModel = null
-            } else {
-
-                // collapse previously expanded view
-                val expandedModelPosition = adapterList.indexOf(expandedModel!!)
-                val oldViewHolder =
-                    recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ViewHolder
-                if (oldViewHolder != null) expandItem(oldViewHolder, expand = false, animate = true)
-
-                // expand clicked view
-                expandItem(holder, expand = true, animate = true)
-                expandedModel = model
+                    // expand clicked view
+                    expandItem(holder, expand = true, animate = true)
+                    expandedModel = model
+                }
             }
         }
     }

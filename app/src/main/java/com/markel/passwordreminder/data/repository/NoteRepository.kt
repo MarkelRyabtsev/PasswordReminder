@@ -21,6 +21,14 @@ class NoteRepository(
         notes.sortedBy { it.id }
     }
 
+    suspend fun addNote(newNote: NoteEntity) = apiCall {
+        noteDao.addNote(newNote)
+    }
+
+    suspend fun editNote(editedNote: NoteEntity) = apiCall {
+        noteDao.updateNote(editedNote)
+    }
+
     suspend fun getNotesByGroup(groupId: Int) = apiCall {
         noteDao.getByGroup(groupId)
     }

@@ -17,6 +17,8 @@ class PageViewModel(
     val isDataLoaded: MutableLiveData<Resource<Boolean>> = MutableLiveData()
     private var noteList: List<NoteEntity> = listOf()
 
+    var editableNote: NoteEntity? = null
+
     init {
         loadNotes()
     }
