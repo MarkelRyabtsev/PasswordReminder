@@ -15,7 +15,8 @@ import com.markel.passwordreminder.database.entity.GroupEntity
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.*
 import com.markel.passwordreminder.routers.MainRouter
-import com.markel.passwordreminder.ui.bottom_dialog.AddNoteDialog
+import com.markel.passwordreminder.ui.dialog.AddNoteDialog
+import com.markel.passwordreminder.ui.page_fragment.PageViewModel
 import com.markel.passwordreminder.ui.page_fragment.SectionsPagerAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
@@ -23,7 +24,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val viewModel: MainViewModel by viewModel()
+    private val groupViewModel: GroupViewModel by viewModel()
+    private val pageViewModel: PageViewModel by viewModel()
     private val router by inject<MainRouter>()
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
     private lateinit var addNoteDialog: AddNoteDialog
@@ -42,6 +44,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initDialog()
         initListeners()
         observeGroups()
+        observeAddNote()
+        observeUpdateNote()
     }
 
     private fun setupToolbar() {
@@ -73,13 +77,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         addNoteDialog = AddNoteDialog.newInstance(false)
         addNoteDialog.setEventListener(object : AddNoteDialog.EventListener {
             override fun onClick(newNote: NoteEntity) {
-                viewModel.addNote(newNote)
+                pageViewModel.addNote(newNote)
             }
         })
         editNoteDialog = AddNoteDialog.newInstance(true)
         editNoteDialog.setEventListener(object : AddNoteDialog.EventListener {
             override fun onClick(editedNote: NoteEntity) {
-                viewModel.editNote(editedNote)
+                pageViewModel.editNote(editedNote)
             }
         })
     }
@@ -90,7 +94,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun observeGroups() {
-        observe(viewModel.groupListLiveData) {
+        observe(groupViewModel.groupListLiveData) {
             when (it.status) {
                 //Status.LOADING -> displayProgress()
                 Status.SUCCESS -> {
@@ -105,10 +109,39 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    private fun observeAddNote() {
+        observe(pageViewModel.addNote) {
+            when (it.status) {
+                Status.LOADING -> addNoteDialog.displayLoading()
+                Status.SUCCESS -> {
+                    pageViewModel.updateNotes()
+                    addNoteDialog.clearFields()
+                    addNoteDialog.dismiss()
+                }
+                Status.ERROR -> addNoteDialog.displayError()
+            }
+        }
+    }
+
+    private fun observeUpdateNote() {
+        observe(pageViewModel.updateNote) {
+            when (it.status) {
+                Status.LOADING -> editNoteDialog.displayLoading()
+                Status.SUCCESS -> {
+                    pageViewModel.updateNotes()
+                    editNoteDialog.dismiss()
+                }
+                Status.ERROR -> editNoteDialog.displayError()
+            }
+        }
+    }
+
     private fun setGroups(groupList: List<GroupEntity>) {
-        sectionsPagerAdapter.setGroups(groupList)
-        if (groupList.size > 1)
+
+        if (groupList.isNotEmpty()) {
+            sectionsPagerAdapter.setGroups(groupList)
             tabs.show()
+        }
     }
 
     private fun showAddDialog() {

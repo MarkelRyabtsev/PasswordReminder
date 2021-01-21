@@ -6,8 +6,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.page_fragment.PageFragment">
+    android:background="@color/white">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -47,10 +46,12 @@
         android:gravity="center"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:textSize="24dp"
         android:text="empty list"
-        android:textColor="@color/colorAccent"
-        android:visibility="gone"
+        android:textColor="@color/color_snackbar_cancel"
+        android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

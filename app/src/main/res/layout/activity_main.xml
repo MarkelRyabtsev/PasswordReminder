@@ -31,7 +31,8 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
                 android:visibility="gone"
-                app:tabMode="scrollable"/>
+                app:tabMode="scrollable"
+                tools:visibility="visible"/>
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager2.widget.ViewPager2

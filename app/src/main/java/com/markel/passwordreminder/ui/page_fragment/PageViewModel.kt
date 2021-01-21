@@ -9,6 +9,7 @@ import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.setError
 import com.markel.passwordreminder.ext.setLoading
 import com.markel.passwordreminder.ext.setSuccess
+import timber.log.Timber
 
 class PageViewModel(
     private val noteRepository: NoteRepository
@@ -18,12 +19,12 @@ class PageViewModel(
     private var noteList: List<NoteEntity> = listOf()
 
     var editableNote: NoteEntity? = null
+    val updateNote = MutableLiveData<Resource<Boolean>>()
+    val addNote = MutableLiveData<Resource<Boolean>>()
 
-    init {
-        loadNotes()
-    }
+    fun getNotesByGroupId(groupId: Int) = getByGroup(groupId)
 
-    fun getNotes(groupId: Int) = getByGroup(groupId)
+    fun getAllNotes() = noteList
 
     fun updateNotes() = loadNotes()
 
@@ -38,11 +39,36 @@ class PageViewModel(
         }
     }
 
-    private fun getByGroup(groupId: Int) =
-        when (groupId) {
-            1 -> noteList
-            else -> noteList.filter { it.groupId == groupId }
+    fun addNote(newNote: NoteEntity) {
+        addNote.setLoading()
+        makeRequest({ noteRepository.addNote(newNote) }) {
+            when (it) {
+                is RequestResult.Success -> {
+                    addNote.setSuccess(true)
+                }
+                is RequestResult.Error -> {
+                    addNote.setError(it.error)
+                }
+            }
         }
+    }
+
+    fun editNote(editedNote: NoteEntity) {
+        updateNote.setLoading()
+        makeRequest({ noteRepository.editNote(editedNote) }) {
+            when (it) {
+                is RequestResult.Success -> {
+                    updateNote.setSuccess(true)
+                    loadNotes()
+                }
+                is RequestResult.Error -> {
+                    updateNote.setError(it.error)
+                }
+            }
+        }
+    }
+
+    private fun getByGroup(groupId: Int) = noteList.filter { it.groupId == groupId }
 
     private fun loadNotes() {
         isDataLoaded.setLoading()

@@ -1,4 +1,4 @@
-package com.markel.passwordreminder.ui.page_fragment
+package com.markel.passwordreminder.base.fragment
 
 import android.os.Bundle
 import android.view.View
@@ -12,38 +12,24 @@ import com.markel.passwordreminder.ext.hideGroupViews
 import com.markel.passwordreminder.ext.observe
 import com.markel.passwordreminder.ext.show
 import com.markel.passwordreminder.ext.toast
-import com.markel.passwordreminder.ui.bottom_dialog.AddNoteDialog
+import com.markel.passwordreminder.ui.dialog.AddNoteDialog
 import com.markel.passwordreminder.ui.main.MainActivity
+import com.markel.passwordreminder.ui.page_fragment.PageViewModel
 import com.markel.passwordreminder.ui.page_fragment.note.NoteAdapter
 import com.markel.passwordreminder.ui.page_fragment.note.NoteItemClick
 import com.markel.passwordreminder.ui.page_fragment.note.OperationType
 import kotlinx.android.synthetic.main.fragment_page.*
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
-class PageFragment : Fragment(R.layout.fragment_page),
+abstract class BasePageFragment : Fragment(R.layout.fragment_page),
     SwipeRefreshLayout.OnRefreshListener {
 
-    private val viewModel: PageViewModel by sharedViewModel()
+    protected val viewModel by lazy { requireActivity().getViewModel<PageViewModel>() }
 
-    private lateinit var noteAdapter: NoteAdapter
-
-    companion object {
-
-        private const val GROUP_ID = "group_id"
-
-        @JvmStatic
-        fun newInstance(groupId: Int): PageFragment {
-            return PageFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(GROUP_ID, groupId)
-                }
-            }
-        }
-    }
+    protected lateinit var noteAdapter: NoteAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initListeners()
         initAdapter()
         observeData()
@@ -67,7 +53,6 @@ class PageFragment : Fragment(R.layout.fragment_page),
                         if (isLoaded) setData()
                         else displayTextByEmptyList()
                     }
-                    displayNormal()
                 }
                 Status.ERROR -> {
                     displayError(it.message ?: "")
@@ -127,8 +112,11 @@ class PageFragment : Fragment(R.layout.fragment_page),
         }?.show()
     }
 
-    private fun displayTextByEmptyList() {
+    protected fun displayTextByEmptyList() {
+        hideGroupViews(progressBar, rvNotes)
         tvError.show()
+
+        if (swipeRefreshLayout.isRefreshing) swipeRefreshLayout.isRefreshing = false
     }
 
     private fun displayError(text: String) {
@@ -137,9 +125,14 @@ class PageFragment : Fragment(R.layout.fragment_page),
         swipeRefreshLayout.isRefreshing = false
     }
 
-    private fun setData() {
-        noteAdapter.setList(viewModel.getNotes(getGroupId()))
+    open fun setData() {
+        viewModel.getAllNotes().also {
+            if (it.isEmpty())
+                displayTextByEmptyList()
+            else {
+                displayNormal()
+                noteAdapter.setList(it)
+            }
+        }
     }
-
-    private fun getGroupId() = arguments?.getInt(GROUP_ID) ?: 1
 }

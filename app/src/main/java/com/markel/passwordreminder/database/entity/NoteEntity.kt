@@ -12,7 +12,7 @@ data class NoteEntity(
     val description : String,
     val password : String,
     val isProtected : Boolean = false,
-    val groupId : Int = 1
+    val groupId : Int? = null
 ) {
     @Ignore var passwordHided: Boolean = isProtected
     @Ignore var isBackVisible: Boolean = false

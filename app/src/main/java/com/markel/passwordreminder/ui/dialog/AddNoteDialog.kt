@@ -1,4 +1,4 @@
-package com.markel.passwordreminder.ui.bottom_dialog
+package com.markel.passwordreminder.ui.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.database.entity.NoteEntity
-import com.markel.passwordreminder.ext.setSafeOnClickListener
-import com.markel.passwordreminder.ext.toast
+import com.markel.passwordreminder.ext.*
 import com.markel.passwordreminder.ui.page_fragment.PageViewModel
 import kotlinx.android.synthetic.main.dialog_add_note.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -59,6 +58,40 @@ class AddNoteDialog : DialogFragment() {
 
     fun setEventListener(eventListener: EventListener) {
         this.eventListener = eventListener
+    }
+
+    fun clearFields() {
+        dialog?.let {
+            if (!getIsEditing()) {
+                et_description.setText("")
+                et_password.setText("")
+                switch_hide_password.isChecked = false
+            }
+        }
+    }
+
+    fun displayLoading() {
+        hideGroupViews(button_cancel, button_confirm)
+        progressBar.show()
+        et_description.isEnabled = false
+        et_password.isEnabled = false
+        switch_hide_password.isEnabled = false
+        isCancelable = false
+    }
+
+    fun displayError() {
+        showGroupViews(button_cancel, button_confirm)
+        progressBar.hide()
+        et_description.isEnabled = true
+        et_password.isEnabled = true
+        switch_hide_password.isEnabled = true
+        isCancelable = true
+    }
+
+
+    fun successFalse() {
+        displayError()
+        toast("Не удалось изменить данные")
     }
 
     private fun initListeners() {
