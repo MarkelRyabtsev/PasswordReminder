@@ -2,12 +2,14 @@ package com.markel.passwordreminder.data.repository
 
 import com.markel.passwordreminder.data.ApiCaller
 import com.markel.passwordreminder.data.CoroutineCaller
+import com.markel.passwordreminder.database.dao.JunctionDao
 import com.markel.passwordreminder.database.dao.NoteDao
 import com.markel.passwordreminder.database.entity.NoteEntity
 import java.lang.Exception
 
 class NoteRepository(
-    private val noteDao: NoteDao
+    private val noteDao: NoteDao,
+    private val junctionDao: JunctionDao
 ) : CoroutineCaller by ApiCaller {
 
     private var cache: List<NoteEntity>? = null
@@ -30,10 +32,10 @@ class NoteRepository(
     }
 
     suspend fun getNotesByGroup(groupId: Int) = apiCall {
-        noteDao.getByGroup(groupId)
+        junctionDao.getNotesByGroup(groupId)
     }
 
-    suspend fun deleteNote(note: NoteEntity?) = apiCall {
-        noteDao.deleteNote(note)
+    suspend fun deleteNote(noteId: Int) = apiCall {
+        noteDao.deleteNoteById(noteId)
     }
 }

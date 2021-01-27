@@ -12,13 +12,14 @@ import androidx.core.animation.doOnStart
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.base.constants.Constant
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.*
-import com.markel.passwordreminder.util.NotesDiffUtil
+import com.markel.passwordreminder.util.AdapterDiffUtil
 import com.markel.passwordreminder.util.bindColor
 import com.markel.passwordreminder.util.bindDimen
 import com.markel.passwordreminder.util.bindView
@@ -45,7 +46,8 @@ class NoteAdapter(
     private var originalHeight = -1 // will be calculated dynamically
     private var expandedHeight = -1 // will be calculated dynamically
 
-    private var adapterList = ArrayList<NoteEntity>()
+    var adapterList = ArrayList<NoteEntity>()
+    lateinit var tracker: SelectionTracker<NoteEntity>
 
     private val listItemExpandDuration: Long get() = 300L
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -60,7 +62,7 @@ class NoteAdapter(
 
     fun setList(list: List<NoteEntity>) {
         DiffUtil.calculateDiff(
-            NotesDiffUtil(adapterList, list)
+            AdapterDiffUtil(adapterList, list)
         ).dispatchUpdatesTo(this)
         adapterList.clear()
         adapterList.addAll(list)
@@ -69,15 +71,31 @@ class NoteAdapter(
     override fun getItemCount(): Int = adapterList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder(inflater.inflate(R.layout.item_note_list, parent, false))
+        ViewHolder(inflater.inflate(R.layout.item_note_list, parent, false), adapterList)
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = Unit
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: List<Any>) {
         val model = adapterList[position]
+
+        if (expandedModel != null) {
+            val expandedModelPosition = adapterList.indexOf(expandedModel!!)
+            val oldViewHolder =
+                recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ViewHolder
+            if (oldViewHolder != null) expandItem(
+                oldViewHolder,
+                expand = false,
+                animate = true
+            )
+            expandedModel = null
+        }
+        holder.setActivatedState(tracker.isSelected(adapterList[position]))
+
 
         holder.noteDescription.text = model.description
         if (model.passwordHided) {
@@ -135,30 +153,36 @@ class NoteAdapter(
         scaleDownItem(holder, position, isScaledDown)
 
         holder.cardContainer.setOnClickListener {
-            when (expandedModel) {
-                null -> {
-                    // expand clicked view
-                    itemClickListener.invoke(model)
-                    expandItem(holder, expand = true, animate = true)
-                    expandedModel = model
-                }
-                model -> {
-                    // collapse clicked view
-                    itemClickListener.invoke(null)
-                    expandItem(holder, expand = false, animate = true)
-                    expandedModel = null
-                }
-                else -> {
-                    // collapse previously expanded view
-                    itemClickListener.invoke(model)
-                    val expandedModelPosition = adapterList.indexOf(expandedModel!!)
-                    val oldViewHolder =
-                        recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ViewHolder
-                    if (oldViewHolder != null) expandItem(oldViewHolder, expand = false, animate = true)
+            if (!tracker.hasSelection()) {
+                when (expandedModel) {
+                    null -> {
+                        // expand clicked view
+                        itemClickListener.invoke(model)
+                        expandItem(holder, expand = true, animate = true)
+                        expandedModel = model
+                    }
+                    model -> {
+                        // collapse clicked view
+                        itemClickListener.invoke(null)
+                        expandItem(holder, expand = false, animate = true)
+                        expandedModel = null
+                    }
+                    else -> {
+                        // collapse previously expanded view
+                        itemClickListener.invoke(model)
+                        val expandedModelPosition = adapterList.indexOf(expandedModel!!)
+                        val oldViewHolder =
+                            recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ViewHolder
+                        if (oldViewHolder != null) expandItem(
+                            oldViewHolder,
+                            expand = false,
+                            animate = true
+                        )
 
-                    // expand clicked view
-                    expandItem(holder, expand = true, animate = true)
-                    expandedModel = model
+                        // expand clicked view
+                        expandItem(holder, expand = true, animate = true)
+                        expandedModel = model
+                    }
                 }
             }
         }
@@ -251,10 +275,29 @@ class NoteAdapter(
         setScaleDownProgress(holder, position, if (isScaleDown) 1f else 0f)
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, private val items: List<NoteEntity>) :
+        RecyclerView.ViewHolder(itemView), ViewHolderWithDetails<NoteEntity> {
+        override fun getItemDetail() =
+            NoteItemDetails(adapterPosition, items.getOrNull(adapterPosition))
+
+        fun setActivatedState(isActivated: Boolean) {
+            itemView.isActivated = isActivated
+            when (isActivated) {
+                true -> {
+                    selectionImage.show()
+                    chevron.hide()
+                }
+                false -> {
+                    selectionImage.hide()
+                    chevron.show()
+                }
+            }
+        }
+
         val noteDescription: TextView by bindView(R.id.note_description)
         val notePassword: TextView by bindView(R.id.note_password)
         val passwordToggle: ImageView by bindView(R.id.passwordToggle)
+        val selectionImage: ImageView by bindView(R.id.iv_selection_image)
 
         val editButton: ImageView by bindView(R.id.iv_card_edit)
         val shareButton: ImageView by bindView(R.id.iv_card_share)

@@ -8,13 +8,13 @@ import androidx.fragment.app.DialogFragment
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.*
-import com.markel.passwordreminder.ui.page_fragment.PageViewModel
+import com.markel.passwordreminder.ui.page_fragment.view_model.EditNoteViewModel
 import kotlinx.android.synthetic.main.dialog_add_note.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class AddNoteDialog : DialogFragment() {
 
-    private val viewModel: PageViewModel by sharedViewModel()
+    private val viewModel: EditNoteViewModel by sharedViewModel()
 
     private var eventListener: EventListener? = null
 
@@ -102,7 +102,6 @@ class AddNoteDialog : DialogFragment() {
                         eventListener?.onClick(
                             NoteEntity(
                                 id = it.id,
-                                groupId = it.groupId,
                                 description = et_description.text.toString(),
                                 password = et_password.text.toString(),
                                 isProtected = switch_hide_password.isChecked

@@ -15,7 +15,7 @@ class SectionsPagerAdapter(
     override fun getItemCount() = groupList.size + 1
 
     override fun createFragment(position: Int): Fragment = when (position) {
-        0 -> AllNotesPageFragment.newInstance()
+        0 -> MainPageFragment.newInstance()
         else -> AdditionalPageFragment.newInstance(groupList[position - 1].id)
     }
 

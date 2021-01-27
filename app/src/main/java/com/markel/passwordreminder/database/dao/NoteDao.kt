@@ -11,12 +11,9 @@ interface NoteDao {
     @Update
     fun updateNote(note: NoteEntity)
 
-    @Delete
-    fun deleteNote(note: NoteEntity?)
+    @Query("DELETE FROM notes WHERE id = :noteId")
+    fun deleteNoteById(noteId: Int)
 
     @Query("SELECT * FROM notes")
-    fun getAllNotes() : List<NoteEntity>
-
-    @Query("SELECT * FROM notes WHERE groupId = :groupId")
-    fun getByGroup(groupId: Int) : List<NoteEntity>
+    fun getAllNotes(): List<NoteEntity>
 }

@@ -16,8 +16,8 @@ import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.*
 import com.markel.passwordreminder.routers.MainRouter
 import com.markel.passwordreminder.ui.dialog.AddNoteDialog
-import com.markel.passwordreminder.ui.page_fragment.PageViewModel
 import com.markel.passwordreminder.ui.page_fragment.SectionsPagerAdapter
+import com.markel.passwordreminder.ui.page_fragment.view_model.EditNoteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -25,7 +25,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val groupViewModel: GroupViewModel by viewModel()
-    private val pageViewModel: PageViewModel by viewModel()
+    private val editNoteViewModel: EditNoteViewModel by viewModel()
     private val router by inject<MainRouter>()
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
     private lateinit var addNoteDialog: AddNoteDialog
@@ -77,13 +77,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         addNoteDialog = AddNoteDialog.newInstance(false)
         addNoteDialog.setEventListener(object : AddNoteDialog.EventListener {
             override fun onClick(newNote: NoteEntity) {
-                pageViewModel.addNote(newNote)
+                editNoteViewModel.addNote(newNote)
             }
         })
         editNoteDialog = AddNoteDialog.newInstance(true)
         editNoteDialog.setEventListener(object : AddNoteDialog.EventListener {
             override fun onClick(editedNote: NoteEntity) {
-                pageViewModel.editNote(editedNote)
+                editNoteViewModel.editNote(editedNote)
             }
         })
     }
@@ -110,11 +110,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun observeAddNote() {
-        observe(pageViewModel.addNote) {
+        observe(editNoteViewModel.addNote) {
             when (it.status) {
                 Status.LOADING -> addNoteDialog.displayLoading()
                 Status.SUCCESS -> {
-                    pageViewModel.updateNotes()
+                    editNoteViewModel.updateNotes()
                     addNoteDialog.clearFields()
                     addNoteDialog.dismiss()
                 }
@@ -124,11 +124,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun observeUpdateNote() {
-        observe(pageViewModel.updateNote) {
+        observe(editNoteViewModel.editNote) {
             when (it.status) {
                 Status.LOADING -> editNoteDialog.displayLoading()
                 Status.SUCCESS -> {
-                    pageViewModel.updateNotes()
+                    editNoteViewModel.updateNotes()
                     editNoteDialog.dismiss()
                 }
                 Status.ERROR -> editNoteDialog.displayError()
@@ -160,6 +160,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.nav_folders -> router.openFolders(this)
             R.id.nav_settings -> router.openSettings(this)
         }
         drawer_layout.closeDrawer(GravityCompat.START)

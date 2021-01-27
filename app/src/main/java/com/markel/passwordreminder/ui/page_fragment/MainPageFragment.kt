@@ -6,28 +6,16 @@ import com.markel.passwordreminder.base.fragment.BasePageFragment
 import com.markel.passwordreminder.base.vo.Status
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.observe
-import com.markel.passwordreminder.ui.page_fragment.view_model.AdditionalPageViewModel
+import com.markel.passwordreminder.ui.page_fragment.view_model.MainPageViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
-class AdditionalPageFragment : BasePageFragment() {
+class MainPageFragment : BasePageFragment() {
 
-    private val pageViewModel: AdditionalPageViewModel by viewModel {
-        parametersOf(getGroupId())
-    }
+    private val mainViewModel: MainPageViewModel by viewModel()
 
     companion object {
-
-        private const val GROUP_ID = "group_id"
-
         @JvmStatic
-        fun newInstance(groupId: Int): AdditionalPageFragment {
-            return AdditionalPageFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(GROUP_ID, groupId)
-                }
-            }
-        }
+        fun newInstance() = MainPageFragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,7 +25,7 @@ class AdditionalPageFragment : BasePageFragment() {
     }
 
     private fun observeData() {
-        observe(pageViewModel.notes) {
+        observe(mainViewModel.notes) {
             when (it.status) {
                 Status.LOADING -> displayProgress()
                 Status.SUCCESS -> setData(it.data)
@@ -51,7 +39,7 @@ class AdditionalPageFragment : BasePageFragment() {
     private fun observeUpdateNotes() {
         observe(viewModel.updateNote) {
             it.data?.let { isUpdate ->
-                if (isUpdate) pageViewModel.updateNotes()
+                if (isUpdate) mainViewModel.updateNotes()
             }
         }
     }
@@ -66,6 +54,4 @@ class AdditionalPageFragment : BasePageFragment() {
             }
         }
     }
-
-    private fun getGroupId() = arguments?.getInt(GROUP_ID) ?: 1
 }

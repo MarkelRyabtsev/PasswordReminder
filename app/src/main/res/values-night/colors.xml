@@ -12,8 +12,8 @@
     <color name="color_snackbar_cancel">#EA6666</color>
     <color name="color_snackbar_background">#2D3038</color>
 
-    <color name="list_item_bg_collapsed">#ECECEC</color>
-    <color name="list_item_bg_expanded">#A3A3A3</color>
+    <color name="list_item_bg_collapsed">#2D3038</color>
+    <color name="list_item_bg_expanded">#22242B</color>
 
     <color name="toolbar_color_default">#FF000000</color>
 </resources>

@@ -23,7 +23,7 @@ class CustomSnackbar(
 
         fun make(
             view: View,
-            noteDescription: String,
+            noteDescription: String?,
             duration: Int,
             listener: View.OnClickListener?,
             timerIsDone: () -> Unit
@@ -43,7 +43,7 @@ class CustomSnackbar(
                 ) as CustomSnackbarView
                 // We create and return our Snackbar
                 customView.apply {
-                    tvNoteDescription.text = noteDescription
+                    tvNoteDescription.text = noteDescription ?: ""
                     tvActionUndo.setSafeOnClickListener {
                         listener?.onClick(customView.tvActionUndo)
                     }

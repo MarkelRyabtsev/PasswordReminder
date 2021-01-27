@@ -13,7 +13,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
         android:orientation="vertical"
-        android:backgroundTint="@color/color_snackbar_background"
+        style="@style/NoteItemCard"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp"
         app:cardMaxElevation="0dp"
@@ -32,14 +32,30 @@
                 android:padding="@dimen/list_item_horizontal_padding"
                 android:transformPivotX="0dp">
 
-                <ImageView
-                    android:id="@+id/iv_card_arrow"
-                    android:layout_width="12dp"
+                <FrameLayout
+                    android:id="@+id/icons_container"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/note_description"
                     android:layout_alignBottom="@+id/note_password"
-                    android:layout_marginEnd="16dp"
-                    app:srcCompat="@drawable/ic_card_arrow_right" />
+                    android:layout_marginEnd="16dp">
+
+                    <ImageView
+                        android:id="@+id/iv_selection_image"
+                        android:layout_width="24dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/ic_check_circle" />
+
+                    <ImageView
+                        android:id="@+id/iv_card_arrow"
+                        android:layout_width="12dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_card_arrow_right" />
+
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/note_description"
@@ -48,7 +64,7 @@
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:layout_toEndOf="@id/iv_card_arrow"
+                    android:layout_toEndOf="@id/icons_container"
                     android:layout_toStartOf="@id/passwordToggle"
                     tools:text="Description" />
 
@@ -60,7 +76,7 @@
                     android:layout_marginEnd="16dp"
                     android:textColor="@color/colorAccent"
                     android:textSize="18sp"
-                    android:layout_toEndOf="@id/iv_card_arrow"
+                    android:layout_toEndOf="@id/icons_container"
                     android:layout_toStartOf="@id/passwordToggle"
                     tools:text="password1234" />
 

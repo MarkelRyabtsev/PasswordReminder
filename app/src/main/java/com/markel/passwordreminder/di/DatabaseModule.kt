@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.markel.passwordreminder.database.AppDatabase
 import com.markel.passwordreminder.database.entity.GroupEntity
+import com.markel.passwordreminder.database.entity.NoteEntity
 import kotlinx.coroutines.*
 import org.koin.dsl.module
 
@@ -29,6 +30,24 @@ private val database = fun(app: Application): AppDatabase {
                                 INSTANCE!!.groupDao().addGroup(GroupEntity(2, "TEST2", 2))
                                 INSTANCE!!.groupDao().addGroup(GroupEntity(3, "TEST3", 3))
                                 INSTANCE!!.groupDao().addGroup(GroupEntity(4, "TEST4", 4))
+
+                                INSTANCE!!.noteDao().addNote(NoteEntity(1, "Test1", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(2, "Test2", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(3, "Test3", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(4, "Test4", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(5, "Test5", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(6, "Test6", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(7, "Test7", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(8, "Test8", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(9, "Test9", "qwerty"))
+                                INSTANCE!!.noteDao().addNote(NoteEntity(10, "Test10", "qwerty"))
+
+                                INSTANCE!!.junctionDao().addJunction(1, 1)
+                                INSTANCE!!.junctionDao().addJunction(2, 1)
+                                INSTANCE!!.junctionDao().addJunction(3, 1)
+                                INSTANCE!!.junctionDao().addJunction(1, 2)
+                                INSTANCE!!.junctionDao().addJunction(3, 2)
+                                INSTANCE!!.junctionDao().addJunction(2, 3)
                             }
                         }
                     })
@@ -41,9 +60,11 @@ private val database = fun(app: Application): AppDatabase {
 
 private val noteDao = fun(db: AppDatabase) = db.noteDao()
 private val groupDao = fun(db: AppDatabase) = db.groupDao()
+private val junctionDao = fun(db: AppDatabase) = db.junctionDao()
 
 internal val roomModule = module {
     single { database(get()) }
     single { noteDao(get()) }
     single { groupDao(get()) }
+    single { junctionDao(get()) }
 }

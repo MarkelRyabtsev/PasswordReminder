@@ -36,6 +36,13 @@
             android:theme="@style/Theme.PasswordReminder.NoActionBar">
         </activity>
 
+        <activity
+            android:name=".ui.folders.FoldersActivity"
+            android:label="@string/title_activity_folders"
+            android:windowSoftInputMode = "adjustResize"
+            android:theme="@style/Theme.PasswordReminder.NoActionBar">
+        </activity>
+
     </application>
 
 </manifest>

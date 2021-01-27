@@ -10,6 +10,8 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
 
+    <!-- Folders Activity Title -->
+    <string name="title_activity_folders">Folders</string>
 
     <!-- Settings Activity Title -->
     <string name="title_activity_settings">Settings</string>
