@@ -53,7 +53,7 @@ dependencies {
     // design
     implementation "androidx.appcompat:appcompat:1.2.0"
     implementation "androidx.recyclerview:recyclerview:1.1.0"
-    implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
     implementation "androidx.constraintlayout:constraintlayout:2.0.4"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.2.1'
@@ -78,6 +78,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.3"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.3"
+
 
     // di
     implementation "org.koin:koin-android:2.2.1"

@@ -38,6 +38,20 @@ class FolderListAdapter(context: Context) : RecyclerView.Adapter<FolderListAdapt
         notifyDataSetChanged()
     }
 
+    fun swapItems(fromPosition: Int, toPosition: Int) {
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                adapterList[i] = adapterList.set(i + 1, adapterList[i]);
+            }
+        } else {
+            for (i in fromPosition..toPosition + 1) {
+                adapterList[i] = adapterList.set(i - 1, adapterList[i]);
+            }
+        }
+
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val buttonDrag: ImageView by bindView(R.id.iv_drag_item)

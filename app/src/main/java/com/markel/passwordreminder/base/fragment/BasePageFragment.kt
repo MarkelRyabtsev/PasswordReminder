@@ -55,7 +55,7 @@ abstract class BasePageFragment : Fragment(R.layout.fragment_page),
             .build()
         noteAdapter.tracker = tracker
 
-        tracker.addObserver(object : SelectionTracker.SelectionObserver<Any>() {
+        tracker.addObserver(object : SelectionTracker.SelectionObserver<NoteEntity>() {
             override fun onSelectionChanged() {
                 super.onSelectionChanged()
                 if (tracker.hasSelection() && actionMode == null) {

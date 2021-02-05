@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/folders_nav_graph"
+    app:startDestination="@id/folderListFragment">
+
+    <fragment
+        android:id="@+id/folderListFragment"
+        android:name="com.markel.passwordreminder.ui.folders.FolderListFragment"
+        android:label="@string/title_activity_folders"
+        tools:layout="@layout/folders_fragment_list">
+        <action
+            android:id="@+id/action_folderListFragment_to_newFolderFragment"
+            app:destination="@id/newFolderFragment" />
+        <action
+            android:id="@+id/action_folderListFragment_to_editFolderFragment"
+            app:destination="@id/editFolderFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newFolderFragment"
+        android:name="com.markel.passwordreminder.ui.folders.NewFolderFragment"
+        android:label="@string/title_activity_new_folder"
+        tools:layout="@layout/folders_fragment_new">
+        <action
+            android:id="@+id/action_newFolderFragment_to_addNotesFragment"
+            app:destination="@id/addNotesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addNotesFragment"
+        android:name="com.markel.passwordreminder.ui.folders.IncludeNotesFragment"
+        android:label="@string/title_activity_include_notes"
+        tools:layout="@layout/folders_fragment_include_notes">
+        <action
+            android:id="@+id/action_addNotesFragment_to_newFolderFragment"
+            app:destination="@id/newFolderFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editFolderFragment"
+        android:name="com.markel.passwordreminder.ui.folders.NewFolderFragment"
+        tools:layout="@layout/folders_fragment_new">
+        <action
+            android:id="@+id/action_editFolderFragment_to_addNotesToExistingFolderFragment"
+            app:destination="@id/addNotesToExistingFolderFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addNotesToExistingFolderFragment"
+        android:name="com.markel.passwordreminder.ui.folders.IncludeNotesFragment"
+        tools:layout="@layout/folders_fragment_include_notes">
+        <action
+            android:id="@+id/action_addNotesToExistingFolderFragment_to_editFolderFragment"
+            app:destination="@id/editFolderFragment" />
+    </fragment>
+</navigation>

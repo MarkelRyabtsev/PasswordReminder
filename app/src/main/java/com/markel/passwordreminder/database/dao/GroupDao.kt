@@ -10,4 +10,7 @@ interface GroupDao {
 
     @Query("SELECT * FROM groups")
     fun getGroups(): List<GroupEntity>
+
+    @Query("INSERT INTO groups VALUES(77, :folderName, (SELECT MAX(position) FROM groups) + 1)")
+    fun addFolder(folderName: String) : Long
 }

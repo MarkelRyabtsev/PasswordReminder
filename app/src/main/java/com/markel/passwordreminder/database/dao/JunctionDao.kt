@@ -3,6 +3,7 @@ package com.markel.passwordreminder.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.markel.passwordreminder.database.entity.GroupNoteEntity
 import com.markel.passwordreminder.database.entity.NoteEntity
 
 @Dao
@@ -12,6 +13,9 @@ interface JunctionDao {
         VALUES(:groupId, :noteId)
     """)
     fun addJunction(noteId: Int, groupId: Int)
+
+    @Insert
+    fun insertJunction(junction: GroupNoteEntity)
 
     @Query("DELETE FROM group_note_junction WHERE noteId = :noteId")
     fun deleteJunctionByNoteId(noteId: Int)

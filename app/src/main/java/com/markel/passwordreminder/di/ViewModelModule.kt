@@ -1,5 +1,6 @@
 package com.markel.passwordreminder.di
 
+import com.markel.passwordreminder.ui.folders.view_model.FoldersViewModel
 import com.markel.passwordreminder.ui.main.GroupViewModel
 import com.markel.passwordreminder.ui.page_fragment.view_model.AdditionalPageViewModel
 import com.markel.passwordreminder.ui.page_fragment.view_model.EditNoteViewModel
@@ -17,4 +18,5 @@ val viewModelModule = module {
     viewModel { MainPageViewModel(get()) }
     viewModel { (groupId: Int) -> AdditionalPageViewModel(get(), groupId) }
     viewModel { EditNoteViewModel(get()) }
+    viewModel { FoldersViewModel(get(), get()) }
 }

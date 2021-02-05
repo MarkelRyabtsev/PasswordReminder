@@ -32,15 +32,12 @@
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:windowSoftInputMode = "adjustResize"
-            android:theme="@style/Theme.PasswordReminder.NoActionBar">
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".ui.folders.FoldersActivity"
-            android:label="@string/title_activity_folders"
-            android:windowSoftInputMode = "adjustResize"
-            android:theme="@style/Theme.PasswordReminder.NoActionBar">
+            android:screenOrientation="portrait">
         </activity>
 
     </application>

@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(toolbar)
+        //setSupportActionBar(toolbar)
         val drawerToggle = ActionBarDrawerToggle(this, drawer_layout, R.string.open, R.string.close)
         drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()

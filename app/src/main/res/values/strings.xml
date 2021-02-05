@@ -1,17 +1,20 @@
 <resources>
     <string name="app_name">Password Reminder</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
 
     <string name="action_cancel">Отмена</string>
     <string name="action_ok">Ок</string>
     <string name="action_create">Создать</string>
     <string name="action_edit">Изменить</string>
+    <string name="action_save">Save</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
 
+    <string name="hided_password_dots">𐄁𐄁𐄁𐄁𐄁𐄁𐄁𐄁</string>
+
     <!-- Folders Activity Title -->
     <string name="title_activity_folders">Folders</string>
+    <string name="title_activity_new_folder">New Folder</string>
+    <string name="title_activity_include_notes">Include Notes</string>
 
     <!-- Settings Activity Title -->
     <string name="title_activity_settings">Settings</string>
