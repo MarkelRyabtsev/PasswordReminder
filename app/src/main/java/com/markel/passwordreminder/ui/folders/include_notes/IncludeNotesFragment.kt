@@ -1,4 +1,4 @@
-package com.markel.passwordreminder.ui.folders
+package com.markel.passwordreminder.ui.folders.include_notes
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import com.google.android.material.chip.Chip
@@ -15,16 +16,16 @@ import com.markel.passwordreminder.base.vo.Status
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.observe
 import com.markel.passwordreminder.ext.setSafeOnClickListener
+import com.markel.passwordreminder.ui.dialog.FolderActionsDialogArgs
 import com.markel.passwordreminder.ui.folders.adapter.IncludeNotesAdapter
 import com.markel.passwordreminder.ui.folders.selection.IncludeNotesKeyProvider
 import com.markel.passwordreminder.ui.folders.selection.IncludeNotesLookup
-import com.markel.passwordreminder.ui.folders.view_model.FoldersViewModel
-import kotlinx.android.synthetic.main.folders_fragment_include_notes.*
-import org.koin.androidx.viewmodel.ext.android.getViewModel
+import kotlinx.android.synthetic.main.fragment_folders_include_notes.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class IncludeNotesFragment : Fragment() {
 
-    private val viewModel by lazy { requireActivity().getViewModel<FoldersViewModel>() }
+    private val viewModel: IncludeNotesViewModel by viewModel()
 
     private lateinit var adapter: IncludeNotesAdapter
 
@@ -39,7 +40,7 @@ class IncludeNotesFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.folders_fragment_include_notes, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_folders_include_notes, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -151,5 +152,8 @@ class IncludeNotesFragment : Fragment() {
         }
     }
 
-    private fun getCheckedNoteIds() = arguments?.get(PASSED_CHECKED_NOTES) as List<Int>?
+    private fun getCheckedNoteIds(): List<Int> {
+        val args: IncludeNotesFragmentArgs by navArgs()
+        return args.includedNoteIds.toList()
+    }
 }

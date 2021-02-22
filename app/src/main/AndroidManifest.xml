@@ -32,12 +32,15 @@
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PasswordReminder.NoActionBar">
         </activity>
 
         <activity
             android:name=".ui.folders.FoldersActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PasswordReminder.NoActionBar">
+            <nav-graph android:value="@navigation/folders_nav_graph"/>
         </activity>
 
     </application>

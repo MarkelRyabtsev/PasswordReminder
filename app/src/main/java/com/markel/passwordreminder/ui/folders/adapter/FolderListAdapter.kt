@@ -10,10 +10,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.database.entity.GroupEntity
+import com.markel.passwordreminder.database.entity.NoteEntity
+import com.markel.passwordreminder.ext.setSafeOnClickListener
 import com.markel.passwordreminder.util.AdapterDiffUtil
 import com.markel.passwordreminder.util.bindView
 
-class FolderListAdapter(context: Context) : RecyclerView.Adapter<FolderListAdapter.ViewHolder>() {
+class FolderListAdapter(
+    context: Context,
+    private val moreActionsClickListener: (GroupEntity?) -> Unit,
+    private val itemClickListener: (GroupEntity?) -> Unit
+) : RecyclerView.Adapter<FolderListAdapter.ViewHolder>() {
 
     var adapterList = ArrayList<GroupEntity>()
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -25,6 +31,12 @@ class FolderListAdapter(context: Context) : RecyclerView.Adapter<FolderListAdapt
         val folder = adapterList[position]
 
         holder.folderName.text = folder.name
+        holder.buttonMore.setSafeOnClickListener {
+            moreActionsClickListener.invoke(folder)
+        }
+        holder.itemView.setSafeOnClickListener {
+            itemClickListener.invoke(folder)
+        }
     }
 
     override fun getItemCount() = adapterList.size

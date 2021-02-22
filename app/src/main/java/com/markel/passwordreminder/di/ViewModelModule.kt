@@ -1,6 +1,10 @@
 package com.markel.passwordreminder.di
 
-import com.markel.passwordreminder.ui.folders.view_model.FoldersViewModel
+import com.markel.passwordreminder.ui.dialog.FolderActionsViewModel
+import com.markel.passwordreminder.ui.folders.edit_folder.EditFolderViewModel
+import com.markel.passwordreminder.ui.folders.folder_list.FolderListViewModel
+import com.markel.passwordreminder.ui.folders.include_notes.IncludeNotesViewModel
+import com.markel.passwordreminder.ui.folders.new_folder.NewFolderViewModel
 import com.markel.passwordreminder.ui.main.GroupViewModel
 import com.markel.passwordreminder.ui.page_fragment.view_model.AdditionalPageViewModel
 import com.markel.passwordreminder.ui.page_fragment.view_model.EditNoteViewModel
@@ -18,5 +22,9 @@ val viewModelModule = module {
     viewModel { MainPageViewModel(get()) }
     viewModel { (groupId: Int) -> AdditionalPageViewModel(get(), groupId) }
     viewModel { EditNoteViewModel(get()) }
-    viewModel { FoldersViewModel(get(), get()) }
+    viewModel { FolderListViewModel(get()) }
+    viewModel { NewFolderViewModel(get(), get()) }
+    viewModel { IncludeNotesViewModel(get()) }
+    viewModel { (folderId: Int) -> FolderActionsViewModel(get(), folderId) }
+    viewModel { (folderId: Int) -> EditFolderViewModel(get(), get(), folderId) }
 }

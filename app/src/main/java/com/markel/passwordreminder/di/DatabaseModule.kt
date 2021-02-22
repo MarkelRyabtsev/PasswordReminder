@@ -26,10 +26,10 @@ private val database = fun(app: Application): AppDatabase {
                             super.onCreate(db)
                             val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
                             applicationScope.launch {
-                                INSTANCE!!.groupDao().addGroup(GroupEntity(1, "TEST1", 1))
-                                INSTANCE!!.groupDao().addGroup(GroupEntity(2, "TEST2", 2))
-                                INSTANCE!!.groupDao().addGroup(GroupEntity(3, "TEST3", 3))
-                                INSTANCE!!.groupDao().addGroup(GroupEntity(4, "TEST4", 4))
+                                INSTANCE!!.groupDao().addFolder(GroupEntity(1, "TEST1", 1))
+                                INSTANCE!!.groupDao().addFolder(GroupEntity(2, "TEST2", 2))
+                                INSTANCE!!.groupDao().addFolder(GroupEntity(3, "TEST3", 3))
+                                INSTANCE!!.groupDao().addFolder(GroupEntity(4, "TEST4", 4))
 
                                 INSTANCE!!.noteDao().addNote(NoteEntity(1, "Test1", "qwerty"))
                                 INSTANCE!!.noteDao().addNote(NoteEntity(2, "Test2", "qwerty"))

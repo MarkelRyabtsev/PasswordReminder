@@ -7,52 +7,73 @@
 
     <fragment
         android:id="@+id/folderListFragment"
-        android:name="com.markel.passwordreminder.ui.folders.FolderListFragment"
+        android:name="com.markel.passwordreminder.ui.folders.folder_list.FolderListFragment"
         android:label="@string/title_activity_folders"
-        tools:layout="@layout/folders_fragment_list">
+        tools:layout="@layout/fragment_folders_list">
         <action
             android:id="@+id/action_folderListFragment_to_newFolderFragment"
             app:destination="@id/newFolderFragment" />
         <action
             android:id="@+id/action_folderListFragment_to_editFolderFragment"
             app:destination="@id/editFolderFragment" />
+        <action
+            android:id="@+id/action_folderListFragment_to_folderActionsDialog"
+            app:destination="@id/folderActionsDialog"
+            app:launchSingleTop="true" />
     </fragment>
 
     <fragment
         android:id="@+id/newFolderFragment"
-        android:name="com.markel.passwordreminder.ui.folders.NewFolderFragment"
+        android:name="com.markel.passwordreminder.ui.folders.new_folder.NewFolderFragment"
         android:label="@string/title_activity_new_folder"
-        tools:layout="@layout/folders_fragment_new">
+        tools:layout="@layout/fragment_folders_new">
         <action
             android:id="@+id/action_newFolderFragment_to_addNotesFragment"
-            app:destination="@id/addNotesFragment" />
-    </fragment>
+            app:destination="@id/addNotesToFolderFragment" />
+        <argument
+            android:name="includedNoteIds"
+            android:defaultValue="@null"
+            app:argType="integer[]"
+            app:nullable="true"/>
 
-    <fragment
-        android:id="@+id/addNotesFragment"
-        android:name="com.markel.passwordreminder.ui.folders.IncludeNotesFragment"
-        android:label="@string/title_activity_include_notes"
-        tools:layout="@layout/folders_fragment_include_notes">
-        <action
-            android:id="@+id/action_addNotesFragment_to_newFolderFragment"
-            app:destination="@id/newFolderFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/editFolderFragment"
-        android:name="com.markel.passwordreminder.ui.folders.NewFolderFragment"
-        tools:layout="@layout/folders_fragment_new">
+        android:label="{title}"
+        android:name="com.markel.passwordreminder.ui.folders.edit_folder.EditFolderFragment"
+        tools:layout="@layout/fragment_folders_new">
         <action
             android:id="@+id/action_editFolderFragment_to_addNotesToExistingFolderFragment"
-            app:destination="@id/addNotesToExistingFolderFragment" />
+            app:destination="@id/addNotesToFolderFragment" />
+        <argument
+            android:name="folderId"
+            android:defaultValue="0"
+            app:argType="integer"/>
+        <argument
+            android:name="title"
+            app:argType="string"/>
     </fragment>
 
     <fragment
-        android:id="@+id/addNotesToExistingFolderFragment"
-        android:name="com.markel.passwordreminder.ui.folders.IncludeNotesFragment"
-        tools:layout="@layout/folders_fragment_include_notes">
-        <action
-            android:id="@+id/action_addNotesToExistingFolderFragment_to_editFolderFragment"
-            app:destination="@id/editFolderFragment" />
+        android:id="@+id/addNotesToFolderFragment"
+        android:name="com.markel.passwordreminder.ui.folders.include_notes.IncludeNotesFragment"
+        tools:layout="@layout/fragment_folders_include_notes">
+        <argument
+            android:name="includedNoteIds"
+            app:argType="integer[]"/>
     </fragment>
+
+    <dialog
+        android:id="@+id/folderActionsDialog"
+        android:name="com.markel.passwordreminder.ui.dialog.FolderActionsDialog"
+        tools:layout="@layout/dialog_folders_list_item_actions">
+        <action
+            android:id="@+id/action_folderActionsDialog_to_editFolderFragment"
+            app:destination="@id/editFolderFragment" />
+        <argument
+            android:name="folderId"
+            android:defaultValue="-1"
+            app:argType="integer" />
+    </dialog>
 </navigation>

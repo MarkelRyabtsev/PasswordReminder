@@ -18,7 +18,9 @@ import com.markel.passwordreminder.routers.MainRouter
 import com.markel.passwordreminder.ui.dialog.AddNoteDialog
 import com.markel.passwordreminder.ui.page_fragment.SectionsPagerAdapter
 import com.markel.passwordreminder.ui.page_fragment.view_model.EditNoteViewModel
+import kotlinx.android.synthetic.main.activity_folders.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.toolbar
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setupToolbar() {
-        //setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar)
         val drawerToggle = ActionBarDrawerToggle(this, drawer_layout, R.string.open, R.string.close)
         drawer_layout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()

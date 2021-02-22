@@ -3,19 +3,11 @@ package com.markel.passwordreminder.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceScreen
 import com.markel.passwordreminder.R
-import com.markel.passwordreminder.ext.toast
-import com.markel.passwordreminder.routers.MainRouter
-import kotlinx.android.synthetic.main.settings_activity.toolbar
-import org.koin.android.ext.android.inject
+import kotlinx.android.synthetic.main.activity_settings.toolbar
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -25,7 +17,7 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
+        setContentView(R.layout.activity_settings)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
