@@ -16,7 +16,6 @@ import com.markel.passwordreminder.base.vo.Status
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.observe
 import com.markel.passwordreminder.ext.setSafeOnClickListener
-import com.markel.passwordreminder.ui.dialog.FolderActionsDialogArgs
 import com.markel.passwordreminder.ui.folders.adapter.IncludeNotesAdapter
 import com.markel.passwordreminder.ui.folders.selection.IncludeNotesKeyProvider
 import com.markel.passwordreminder.ui.folders.selection.IncludeNotesLookup
@@ -30,7 +29,6 @@ class IncludeNotesFragment : Fragment() {
     private lateinit var adapter: IncludeNotesAdapter
 
     companion object {
-        const val PASSED_CHECKED_NOTES = "passed_checked_notes"
         const val NEW_CHECKED_NOTES = "new_checked_notes"
 
         private const val INCLUDE_NOTES_SELECTION_ID = "include_notes_selection_id"
@@ -117,7 +115,7 @@ class IncludeNotesFragment : Fragment() {
 
         findNavController().apply {
             previousBackStackEntry?.savedStateHandle?.set(NEW_CHECKED_NOTES, noteIds)
-            popBackStack()
+            navigateUp()
         }
     }
 

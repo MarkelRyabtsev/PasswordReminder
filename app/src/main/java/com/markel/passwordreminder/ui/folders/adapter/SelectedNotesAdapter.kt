@@ -9,13 +9,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.markel.passwordreminder.R
+import com.markel.passwordreminder.database.entity.GroupEntity
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.setSafeOnClickListener
 import com.markel.passwordreminder.ext.show
 import com.markel.passwordreminder.util.AdapterDiffUtil
 import com.markel.passwordreminder.util.bindView
 
-class SelectedNotesAdapter(context: Context) :
+class SelectedNotesAdapter(
+    context: Context,
+    private val listChangedListener: () -> Unit
+) :
     RecyclerView.Adapter<SelectedNotesAdapter.ViewHolder>() {
 
     var adapterList = ArrayList<NoteEntity>()
@@ -38,10 +42,14 @@ class SelectedNotesAdapter(context: Context) :
         updateList(adapterList, list)
     }
 
+    fun getList() = adapterList.toList()
+
     private fun removeFromList(position: Int) {
         val updatedList = ArrayList(adapterList)
         updatedList.removeAt(position)
         updateList(adapterList, updatedList)
+
+        listChangedListener.invoke()
     }
 
     private fun updateList(oldList: List<NoteEntity>, newList: List<NoteEntity>) {

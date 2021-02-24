@@ -38,4 +38,8 @@ class NoteRepository(
     suspend fun deleteNote(noteId: Int) = apiCall {
         noteDao.deleteNoteById(noteId)
     }
+
+    suspend fun getNotesByIds(noteIds: List<Int>) = apiCall {
+        noteDao.getNotesByIds(noteIds)
+    }
 }

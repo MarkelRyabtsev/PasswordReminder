@@ -35,7 +35,7 @@ class EditFolderViewModel(
     }
 
     fun saveChanges(folderName: String, includedNotes: List<NoteEntity>) {
-        makeRequest({ groupRepository.saveFolder(folderName, includedNotes)}) {
+        makeRequest({ groupRepository.saveFolderChanges(folderId, folderName, includedNotes)}) {
             when (it) {
                 is RequestResult.Success -> {
                     saveChangesLiveData.setSuccess(true)
@@ -45,7 +45,7 @@ class EditFolderViewModel(
         }
     }
 
-    fun getNotesByFolderId(folderId: Int) {
+    private fun getNotesByFolderId(folderId: Int) {
         notesInFolderLiveData.setLoading()
         makeRequest({ noteRepository.getNotesByGroup(folderId) }) {
             when (it) {
@@ -72,6 +72,19 @@ class EditFolderViewModel(
                         originalFolderName = folder.name
                         changedFolderName = folder.name
                     }
+                }
+            }
+        }
+    }
+
+    fun getNotesByIds(noteIds: List<Int>) {
+        notesInFolderLiveData.setLoading()
+        makeRequest({ noteRepository.getNotesByIds(noteIds) }) {
+            when (it) {
+                is RequestResult.Success -> {
+                    currentFoldersNotes = it.result
+                    changedNoteList = it.result
+                    notesInFolderLiveData.setSuccess(true)
                 }
             }
         }

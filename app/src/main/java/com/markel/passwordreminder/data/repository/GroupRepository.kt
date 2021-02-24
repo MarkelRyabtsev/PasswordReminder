@@ -22,8 +22,12 @@ class GroupRepository(
         groupDao.getFolderById(folderId)
     }
 
-    suspend fun saveFolder(folderName: String, includedNotes: List<NoteEntity>) = apiCall {
+    suspend fun addFolderWithNotes(folderName: String, includedNotes: List<NoteEntity>) = apiCall {
         groupDao.addFolderWithNotes(folderName, includedNotes)
+    }
+
+    suspend fun saveFolderChanges(folderId: Int, folderName: String, includedNotes: List<NoteEntity>) = apiCall {
+        groupDao.updateFolderWithNotes(folderId, folderName, includedNotes)
     }
 
     suspend fun deleteFolderWithNotes(folder: GroupEntity) = apiCall {

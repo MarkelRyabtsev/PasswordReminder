@@ -30,11 +30,6 @@
         <action
             android:id="@+id/action_newFolderFragment_to_addNotesFragment"
             app:destination="@id/addNotesToFolderFragment" />
-        <argument
-            android:name="includedNoteIds"
-            android:defaultValue="@null"
-            app:argType="integer[]"
-            app:nullable="true"/>
 
     </fragment>
 

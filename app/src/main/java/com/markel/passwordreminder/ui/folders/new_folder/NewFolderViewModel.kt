@@ -27,7 +27,7 @@ class NewFolderViewModel(
     }
 
     fun saveFolder(folderName: String, includedNotes: List<NoteEntity>) {
-        makeRequest({ groupRepository.saveFolder(folderName, includedNotes)}) {
+        makeRequest({ groupRepository.addFolderWithNotes(folderName, includedNotes)}) {
             when (it) {
                 is RequestResult.Success -> {
                     newFolderLiveData.setSuccess(true)

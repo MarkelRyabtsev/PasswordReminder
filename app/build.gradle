@@ -91,7 +91,6 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:2.2.1"
 
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "android.arch.navigation:navigation-fragment:1.0.0"
 
     implementation "com.jakewharton.timber:timber:4.7.1"
 

@@ -3,15 +3,12 @@ package com.markel.passwordreminder.ui.folders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import com.markel.passwordreminder.R
-import com.markel.passwordreminder.ext.toast
 import kotlinx.android.synthetic.main.activity_folders.*
 
 class FoldersActivity : AppCompatActivity() {
@@ -40,12 +37,8 @@ class FoldersActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    /*override fun onSupportNavigateUp(): Boolean {
-        if (navController.currentDestination?.id == R.id.newFolderFragment) {
-            onBackPressedDispatcher.onBackPressed()
-            return false
-        }
-
-        return navController.navigateUp()
-    }*/
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return false
+    }
 }

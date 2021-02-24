@@ -2,8 +2,8 @@ package com.markel.passwordreminder.ui.folders.edit_folder
 
 import android.os.Bundle
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -14,9 +14,9 @@ import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.observe
 import com.markel.passwordreminder.ext.setSafeOnClickListener
 import com.markel.passwordreminder.ext.toast
-import com.markel.passwordreminder.ui.dialog.FolderActionsDialogArgs
-import com.markel.passwordreminder.ui.folders.include_notes.IncludeNotesFragment
 import com.markel.passwordreminder.ui.folders.adapter.SelectedNotesAdapter
+import com.markel.passwordreminder.ui.folders.folder_list.FolderListFragment
+import com.markel.passwordreminder.ui.folders.include_notes.IncludeNotesFragment
 import kotlinx.android.synthetic.main.fragment_folders_new.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -33,6 +33,14 @@ class EditFolderFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    checkFolderChanges()
+                }
+            })
     }
 
     override fun onCreateView(
@@ -47,6 +55,7 @@ class EditFolderFragment : Fragment() {
         observeFolder()
         observeFoldersNotes()
         observeSavingChanges()
+        observeIncludedNotes()
 
         initAdapter()
         initListeners()
@@ -75,7 +84,11 @@ class EditFolderFragment : Fragment() {
     }
 
     private fun initEditTextFolderName() {
-        et_folder_name.setText(viewModel.currentFolder?.name ?: getFolderName())
+        et_folder_name.setText(
+            if (viewModel.changedFolderName.isNotEmpty())
+                viewModel.changedFolderName
+            else getFolderName()
+        )
     }
 
     private fun observeFolder() {
@@ -89,7 +102,10 @@ class EditFolderFragment : Fragment() {
     private fun observeFoldersNotes() {
         observe(viewModel.notesInFolderLiveData) {
             when (it.status) {
-                Status.SUCCESS -> setData(viewModel.currentFoldersNotes)
+                Status.SUCCESS -> {
+                    setData(viewModel.currentFoldersNotes)
+                    setButtonSaveVisibility()
+                }
             }
         }
     }
@@ -98,17 +114,30 @@ class EditFolderFragment : Fragment() {
         observe(viewModel.saveChangesLiveData) {
             when (it.status) {
                 Status.SUCCESS -> {
-                    //viewModel.updateGroupList()
+                    findNavController().apply {
+                        previousBackStackEntry?.savedStateHandle?.set(FolderListFragment.NEED_UPDATE_FOLDERS, it.data)
+                        navigateUp()
+                    }
                 }
                 Status.ERROR -> requireActivity().toast(it.message)
             }
+        }
+    }
 
-            findNavController().navigateUp()
+    private fun observeIncludedNotes() {
+        val observableData = findNavController()
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<List<Int>>(IncludeNotesFragment.NEW_CHECKED_NOTES)
+        observableData?.let {
+            observe(it) { noteIds ->
+                viewModel.getNotesByIds(noteIds)
+            }
         }
     }
 
     private fun initAdapter() {
-        adapter = SelectedNotesAdapter(requireActivity())
+        adapter = SelectedNotesAdapter(requireActivity(), ::itemListRemoved)
         rv_included_notes.adapter = adapter
     }
 
@@ -126,7 +155,7 @@ class EditFolderFragment : Fragment() {
     private fun initButtonSaveVisibilityListener() {
         et_folder_name.doAfterTextChanged {
             viewModel.changedFolderName = it.toString()
-            checkChanges()
+            setButtonSaveVisibility()
         }
     }
 
@@ -144,12 +173,17 @@ class EditFolderFragment : Fragment() {
         return getIncludedNotes().map { it.id }
     }
 
+    private fun itemListRemoved() {
+        viewModel.changedNoteList = adapter.getList()
+        setButtonSaveVisibility()
+    }
+
     private fun checkFolderChanges() {
-        if (et_folder_name.text.isNotEmpty()) {
+        if (isHasChanges()) {
             AlertDialog.Builder(requireContext()).apply {
-                setTitle("Create Folder?")
-                setMessage("Вы еще на завершили создание Папки. Создать сейчас?")
-                setPositiveButton(R.string.action_create) { dialog, _ ->
+                setTitle("Применить изменения?")
+                setMessage("Вы изменили настройки папки. Применить изменения")
+                setPositiveButton(R.string.action_accept) { dialog, _ ->
                     viewModel.saveChanges(
                         et_folder_name.text.toString(),
                         getIncludedNotes()
@@ -165,10 +199,12 @@ class EditFolderFragment : Fragment() {
         } else findNavController().navigateUp()
     }
 
-    private fun checkChanges() {
-        buttonSave.isVisible = !(viewModel.originalFolderName == viewModel.changedFolderName
-                && viewModel.originalNoteList == viewModel.changedNoteList)
+    private fun setButtonSaveVisibility() {
+        buttonSave.isVisible = isHasChanges()
     }
+
+    private fun isHasChanges() =
+        viewModel.originalFolderName != viewModel.changedFolderName || viewModel.originalNoteList != viewModel.changedNoteList
 
     private fun getFolderId(): Int {
         val args: EditFolderFragmentArgs by navArgs()
