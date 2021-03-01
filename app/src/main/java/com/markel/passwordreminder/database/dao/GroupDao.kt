@@ -12,7 +12,7 @@ interface GroupDao {
     @Delete
     fun deleteFolder(folder: GroupEntity)
 
-    @Query("SELECT * FROM groups")
+    @Query("SELECT * FROM groups ORDER BY position")
     fun getGroups(): List<GroupEntity>
 
     @Query("SELECT * FROM groups WHERE id = :folderId")
@@ -53,6 +53,13 @@ interface GroupDao {
         deleteFolder(folder)
     }
 
+    @Transaction
+    fun updatePositions(listIds: List<Int>) {
+        for (newPosition in listIds.indices) {
+            updatePosition(listIds[newPosition], newPosition + 1)
+        }
+    }
+
     @Update
     fun updateFolder(folder: GroupEntity)
 
@@ -61,4 +68,7 @@ interface GroupDao {
 
     @Query("INSERT INTO group_note_junction VALUES(:groupId, :noteId)")
     fun addJunction(noteId: Int, groupId: Int)
+
+    @Query("UPDATE groups SET position = :newPosition WHERE id = :folderId")
+    fun updatePosition(folderId: Int, newPosition: Int)
 }

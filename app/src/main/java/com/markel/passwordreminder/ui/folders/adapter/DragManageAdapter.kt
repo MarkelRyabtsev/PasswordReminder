@@ -4,18 +4,19 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 class DragManageAdapter(
-    adapter: FolderListAdapter,
+    var adapter: FolderListAdapter,
     dragDirs: Int,
     swipeDirs: Int
 ) : ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
-    var nameAdapter = adapter
+
+    override fun isLongPressDragEnabled() = true
 
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        nameAdapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
+        adapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
         return true
     }
 

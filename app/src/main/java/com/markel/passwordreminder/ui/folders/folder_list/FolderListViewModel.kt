@@ -6,7 +6,6 @@ import com.markel.passwordreminder.base.vo.Resource
 import com.markel.passwordreminder.data.RequestResult
 import com.markel.passwordreminder.data.repository.GroupRepository
 import com.markel.passwordreminder.database.entity.GroupEntity
-import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.setError
 import com.markel.passwordreminder.ext.setLoading
 import com.markel.passwordreminder.ext.setSuccess
@@ -16,8 +15,16 @@ class FolderListViewModel(
 ) : BaseViewModel() {
 
     val groupListLiveData: MutableLiveData<Resource<List<GroupEntity>>> = MutableLiveData()
+    val foldersPositionsLiveData: MutableLiveData<Resource<Boolean>> = MutableLiveData()
+
+    var originalFolderList: List<GroupEntity> = listOf()
+    private var isOriginalFolderListUpdated = false
 
     init {
+        getGroups()
+    }
+
+    fun updateGroupList() {
         getGroups()
     }
 
@@ -27,6 +34,10 @@ class FolderListViewModel(
             when (it) {
                 is RequestResult.Success -> {
                     groupListLiveData.setSuccess(it.result)
+                    if (!isOriginalFolderListUpdated) {
+                        originalFolderList = it.result
+                        isOriginalFolderListUpdated = true
+                    }
                 }
                 is RequestResult.Error -> {
                     groupListLiveData.setError(it.error)
@@ -35,7 +46,16 @@ class FolderListViewModel(
         }
     }
 
-    fun updateGroupList() {
-        getGroups()
+    fun updateFoldersPositions(listIds: List<Int>) {
+        makeRequest({  groupRepository.updatePositions(listIds) }) {
+            when (it) {
+                is RequestResult.Success -> {
+                    foldersPositionsLiveData.setSuccess(true)
+                }
+                is RequestResult.Error -> {
+                    foldersPositionsLiveData.setError(it.error)
+                }
+            }
+        }
     }
 }

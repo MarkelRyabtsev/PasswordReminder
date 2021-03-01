@@ -33,4 +33,8 @@ class GroupRepository(
     suspend fun deleteFolderWithNotes(folder: GroupEntity) = apiCall {
         groupDao.deleteFolderWithNotes(folder)
     }
+
+    suspend fun updatePositions(listIds: List<Int>) = apiCall {
+        groupDao.updatePositions(listIds)
+    }
 }

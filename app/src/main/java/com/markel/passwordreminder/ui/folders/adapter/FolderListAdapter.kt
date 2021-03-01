@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.markel.passwordreminder.R
 import com.markel.passwordreminder.database.entity.GroupEntity
-import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.setSafeOnClickListener
 import com.markel.passwordreminder.util.AdapterDiffUtil
 import com.markel.passwordreminder.util.bindView

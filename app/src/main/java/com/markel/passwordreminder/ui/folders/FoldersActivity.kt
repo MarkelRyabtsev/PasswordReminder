@@ -24,17 +24,14 @@ class FoldersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_folders)
 
+        setSupportActionBar(toolbar)
         val host: NavHostFragment =
             supportFragmentManager.findFragmentById(R.id.folders_nav_host_fragment) as NavHostFragment?
                 ?: return
         navController = host.navController
 
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setSupportActionBar(toolbar)
-
+        appBarConfiguration = AppBarConfiguration.Builder().build()
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onSupportNavigateUp(): Boolean {

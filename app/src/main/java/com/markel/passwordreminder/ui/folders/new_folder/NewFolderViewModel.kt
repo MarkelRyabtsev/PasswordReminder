@@ -6,7 +6,6 @@ import com.markel.passwordreminder.base.vo.Resource
 import com.markel.passwordreminder.data.RequestResult
 import com.markel.passwordreminder.data.repository.GroupRepository
 import com.markel.passwordreminder.data.repository.NoteRepository
-import com.markel.passwordreminder.database.entity.GroupEntity
 import com.markel.passwordreminder.database.entity.NoteEntity
 import com.markel.passwordreminder.ext.setError
 import com.markel.passwordreminder.ext.setLoading
@@ -17,14 +16,10 @@ class NewFolderViewModel(
     private val noteRepository: NoteRepository
 ) : BaseViewModel() {
 
-    val noteListLiveData: MutableLiveData<Resource<List<NoteEntity>>> = MutableLiveData()
     val newFolderLiveData: MutableLiveData<Resource<Boolean>> = MutableLiveData()
+    val notesInFolderLiveData: MutableLiveData<Resource<Boolean>> = MutableLiveData()
 
-    private var noteList: List<NoteEntity> = listOf()
-
-    init {
-        getNotes()
-    }
+    var currentFoldersNotes: List<NoteEntity> = listOf()
 
     fun saveFolder(folderName: String, includedNotes: List<NoteEntity>) {
         makeRequest({ groupRepository.addFolderWithNotes(folderName, includedNotes)}) {
@@ -37,22 +32,13 @@ class NewFolderViewModel(
         }
     }
 
-    fun getNotesById(noteIds: List<Int>?) : List<NoteEntity>? {
-        return noteIds?.let {
-            noteList.filter { note -> note.id in noteIds }
-        }
-    }
-
-    private fun getNotes() {
-        noteListLiveData.setLoading()
-        makeRequest({ noteRepository.getAllNotes() }) {
+    fun getNotesByIds(noteIds: List<Int>) {
+        notesInFolderLiveData.setLoading()
+        makeRequest({ noteRepository.getNotesByIds(noteIds) }) {
             when (it) {
                 is RequestResult.Success -> {
-                    noteListLiveData.setSuccess(it.result)
-                    noteList = it.result
-                }
-                is RequestResult.Error -> {
-                    noteListLiveData.setError(it.error)
+                    currentFoldersNotes = it.result
+                    notesInFolderLiveData.setSuccess(true)
                 }
             }
         }

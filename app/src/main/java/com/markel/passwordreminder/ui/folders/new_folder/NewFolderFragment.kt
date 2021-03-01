@@ -50,6 +50,7 @@ class NewFolderFragment : Fragment() {
 
         observeIncludedNotes()
         observeCreatingFolder()
+        observeFoldersNotes()
 
         initAdapter()
         initListeners()
@@ -84,7 +85,7 @@ class NewFolderFragment : Fragment() {
             ?.getLiveData<List<Int>>(NEW_CHECKED_NOTES)
         observableData?.let {
             observe(it) { noteIds ->
-                setData(viewModel.getNotesById(noteIds))
+                viewModel.getNotesByIds(noteIds)
             }
         }
     }
@@ -99,6 +100,17 @@ class NewFolderFragment : Fragment() {
                     }
                 }
                 Status.ERROR -> requireActivity().toast(it.message)
+            }
+        }
+    }
+
+    private fun observeFoldersNotes() {
+        observe(viewModel.notesInFolderLiveData) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    setData(viewModel.currentFoldersNotes)
+                    setButtonSaveVisibility()
+                }
             }
         }
     }
@@ -140,8 +152,7 @@ class NewFolderFragment : Fragment() {
     }
 
     private fun itemListRemoved() {
-        /*viewModel.changedNoteList = adapter.getList()
-        checkChanges()*/
+        viewModel.currentFoldersNotes = adapter.getList()
     }
 
     private fun checkFolderChanges() {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -12,6 +13,7 @@ import com.markel.passwordreminder.base.vo.Status
 import com.markel.passwordreminder.database.entity.GroupEntity
 import com.markel.passwordreminder.ext.observe
 import com.markel.passwordreminder.ext.setSafeOnClickListener
+import com.markel.passwordreminder.ext.toast
 import com.markel.passwordreminder.ui.folders.adapter.DragManageAdapter
 import com.markel.passwordreminder.ui.folders.adapter.FolderListAdapter
 import kotlinx.android.synthetic.main.fragment_folders_list.*
@@ -27,6 +29,18 @@ class FolderListFragment : Fragment() {
         const val NEED_UPDATE_FOLDERS = "need_update_folders"
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    checkFolderChanges()
+                }
+            })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,6 +52,7 @@ class FolderListFragment : Fragment() {
 
         observeData()
         observeChangesInFolders()
+        observeSaveChangesInFoldersPositions()
         initAdapter()
         initListeners()
     }
@@ -65,6 +80,18 @@ class FolderListFragment : Fragment() {
             observe(it) { needUpdate ->
                 needUpdate?.let {
                     if (needUpdate) viewModel.updateGroupList()
+                }
+            }
+        }
+    }
+
+    private fun observeSaveChangesInFoldersPositions() {
+        observe(viewModel.foldersPositionsLiveData) {
+            when (it.status) {
+                Status.SUCCESS -> requireActivity().finish()
+                Status.ERROR -> {
+                    requireActivity().toast("Произошла ошибка сохранения данных")
+                    requireActivity().finish()
                 }
             }
         }
@@ -116,5 +143,23 @@ class FolderListFragment : Fragment() {
                     )
                 )
         }
+    }
+
+    private fun checkFolderChanges() {
+        if (!savePositionsIfNeed()) requireActivity().finish()
+    }
+
+    private fun savePositionsIfNeed(): Boolean {
+        if (viewModel.originalFolderList != folderAdapter.adapterList) {
+            viewModel.updateFoldersPositions(folderAdapter.adapterList.map { it.id })
+            return true
+        }
+
+        return false
+    }
+
+    override fun onPause() {
+        savePositionsIfNeed()
+        super.onPause()
     }
 }
